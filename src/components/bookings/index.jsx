@@ -1,9 +1,10 @@
 import React, { useState, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Spinner } from "flowbite-react";
+import { Spinner } from "flowbite-react";
 
 import CommunityHallImageSlider from "../SvgCommunityGroup";
 import DatePicker from "../DatePicker";
+import Button from "react-bootstrap/Button";
 
 export default function BookingsPage() {
   const [start_date, SetStartDate] = useState(new Date());
@@ -35,7 +36,9 @@ export default function BookingsPage() {
             />
           </Suspense>
           <div className="flex justify-center w-full my-10">
-            <Button onClick={(e) => Proceed(e)}>Proceed</Button>
+            <Button variant="primary" onClick={(e) => Proceed(e)}>
+              Proceed
+            </Button>
           </div>
         </div>
       </div>
