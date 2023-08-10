@@ -12,7 +12,7 @@ export function UpdateUserModal() {
   const { user_data, user_id, isFetching } = useContext(StdContext);
 
   useEffect(() => {
-    if (!isFetching && user_data?.user_id) {
+    if (!isFetching && (user_data?.user_id || user_data?.id)) {
       setUserData(user_data);
     }
   }, [isFetching, user_data]);
@@ -25,8 +25,8 @@ export function UpdateUserModal() {
 
   return (
     <>
-      <Modal show={show} onHide={() => setShow(false)}>
-        <Modal.Header closeButton>
+      <Modal show={show}>
+        <Modal.Header>
           <Modal.Title>Complete your profile</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -84,16 +84,24 @@ const UpdateUser = ({ userData, uid, setShow, updateProfile = false }) => {
               name: values.name || "",
               address: values.address || "",
               plot: values.plot || "",
-              phone_number: values.phno || userData.phone_number,
+              ...(updateProfile && {
+                phone_number: values.phno || userData.phone_number,
+              }),
             };
 
             // check if already existing
             if (
+              updateProfile &&
               userData.phone_number != values.phno &&
               (await User.FindExistingUser(user.phone_number))
             ) {
               toast.error(`${values.phno} is already used`);
-            } else if (userData.phone_number != values.phno) {
+            } else if (updateProfile && userData.phone_number != values.phno) {
+              console.log(
+                userData.phone_number != values.phno,
+                userData.phone_number,
+                values.phno
+              );
               setStep(2);
               setUser(user);
               setNewPhno({
@@ -189,14 +197,16 @@ const UpdateUser = ({ userData, uid, setShow, updateProfile = false }) => {
                 >
                   Submit
                 </Button>
-                <Button
-                  className="flex-1"
-                  onClick={() => {
-                    setShow(false);
-                  }}
-                >
-                  Cancel
-                </Button>
+                {updateProfile && (
+                  <Button
+                    className="flex-1"
+                    onClick={() => {
+                      setShow(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                )}
               </div>
             </Form>
           )}
