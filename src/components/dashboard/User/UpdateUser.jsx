@@ -23,7 +23,6 @@ export function UpdateUserModal() {
       user_phone_number &&
       (!userData?.name || !userData?.address || !userData?.plot)
     ) {
-      console.log(user_phone_number, userData);
       setShow(true);
     }
   }, [userData]);
@@ -117,7 +116,6 @@ const UpdateUser = ({
               }),
               is_member: values.is_member,
             };
-            console.log(user);
             if (
               updateProfile &&
               userData.phone_number != values.phone_number &&

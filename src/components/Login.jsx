@@ -52,7 +52,7 @@ export default function Login() {
         toast.success("OTP sended successfully!");
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
         setLoading(false);
       });
   }

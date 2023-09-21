@@ -34,7 +34,6 @@ export const StdContextProvider = ({ children }) => {
     let unsubscribe;
     const GetUserState = async () => {
       unsubscribe = auth.onAuthStateChanged(async (user) => {
-        console.log(user);
         if (user_signing_in) return; // To prevent race condition
 
         if (!user) {

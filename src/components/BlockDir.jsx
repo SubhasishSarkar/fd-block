@@ -69,7 +69,6 @@ function BlockDir() {
       const q = query(user_collection, where("is_member", "==", true));
       const users = await getDocs(q);
       users.forEach((doc) => {
-        console.log(doc);
         const user_obj = doc.data();
         user_data_set.push({ ...user_obj, id: user_obj.plot });
       });

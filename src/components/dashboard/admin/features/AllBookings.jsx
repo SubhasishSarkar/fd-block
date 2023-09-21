@@ -127,7 +127,6 @@ function AllBookings() {
           }
         }
       }
-      console.log(booking_data_set);
       setBookings(booking_data_set);
       setIsLoading(false);
     };

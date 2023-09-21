@@ -1566,7 +1566,6 @@ export const addToFirebase = async () => {
     };
     const users_collection = doc(db, "users", user.phone_number);
     const res = await setDoc(users_collection, user);
-    console.log(res, user);
   });
 };
 
@@ -1577,10 +1576,8 @@ export const createBlockDirFromUsers = async () => {
     if (doc.phoneNumber != "") result[doc.phoneNumber] = doc;
     else result[doc.name] = doc;
   });
-  console.log(result);
   const block_ref = doc(db, "block_dir", "list");
   const res = await setDoc(block_ref, result);
-  console.log(res);
 };
 
 export const updateBlockDirOnMemberChange = async (user) => {
