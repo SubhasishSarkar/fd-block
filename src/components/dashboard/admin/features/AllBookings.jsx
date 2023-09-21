@@ -122,7 +122,6 @@ function AllBookings() {
             booking_data_set.push({
               ...booking_obj,
               ...data,
-              id: booking_obj.booking_reference_id,
             });
           }
         }
