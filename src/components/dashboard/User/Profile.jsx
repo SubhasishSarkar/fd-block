@@ -12,11 +12,11 @@ function Profile({ adminView = false, userId }) {
   const uid = searchParams.get("uid");
   const [show, setShow] = useState(false);
   const [userData, setUserData] = useState(null);
-  const { user_data, isFetching, user_id } = useContext(StdContext);
+  const { user_data, isFetching, user_phone_number } = useContext(StdContext);
   useEffect(() => {
     const getUser = async () => {
       if (adminView && user_data.isAdmin) {
-        const fetched_data = await User.GetDataFromFirestore(uid);
+        const fetched_data = await User.GetDataFromFirestore("+" + uid.trim());
         setUserData(fetched_data);
       } else if (!isFetching && user_data != null) {
         setUserData(user_data);
@@ -72,9 +72,10 @@ function Profile({ adminView = false, userId }) {
         <Modal.Body>
           <UpdateUser
             userData={userData}
-            uid={user_id}
+            uid={user_phone_number}
             setShow={setShow}
             updateProfile
+            isAdmin={adminView}
           />
         </Modal.Body>
       </Modal>

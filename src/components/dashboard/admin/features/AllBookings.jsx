@@ -119,15 +119,15 @@ function AllBookings() {
           );
           if (booking_doc.exists()) {
             const booking_obj = booking_doc.data();
-            const user_data = { ...data };
-            delete user_data.id;
             booking_data_set.push({
               ...booking_obj,
-              ...user_data,
+              ...data,
+              id: booking_obj.booking_reference_id,
             });
           }
         }
       }
+      console.log(booking_data_set);
       setBookings(booking_data_set);
       setIsLoading(false);
     };

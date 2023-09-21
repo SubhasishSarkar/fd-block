@@ -18,13 +18,12 @@ export const StdContextProvider = ({ children }) => {
   // 1. null (default)
   // 2. "" (no user logged in)
   // 3. <some ID/phone-number> (user is logged in)
-  const [user_id, SetUserId] = useState(null);
+
   const [user_phone_number, SetUserPhoneNumber] = useState(null);
   const [user_data, SetUserData] = useState(null);
 
   const InvalidateUser = () => {
     SetUserPhoneNumber("");
-    SetUserId("");
     SetUserData(null);
     User.ClearLocalStorage();
   };
@@ -35,6 +34,7 @@ export const StdContextProvider = ({ children }) => {
     let unsubscribe;
     const GetUserState = async () => {
       unsubscribe = auth.onAuthStateChanged(async (user) => {
+        console.log(user);
         if (user_signing_in) return; // To prevent race condition
 
         if (!user) {
@@ -43,7 +43,6 @@ export const StdContextProvider = ({ children }) => {
           return;
         }
         SetUserPhoneNumber(user.phoneNumber);
-        SetUserId(user.uid);
         setIsFetching(false);
         return;
       });
@@ -56,11 +55,11 @@ export const StdContextProvider = ({ children }) => {
     if (!force) {
       // Try to get cached data and bail out
 
-      if (user_data?.user_id) {
+      if (user_data?.phone_number) {
         setIsFetching(false);
         return;
       }
-      if (!user_data && User.IsLocalStorageUpdated(user_id)) {
+      if (!user_data && User.IsLocalStorageUpdated(user_data?.phone_number)) {
         const local_data = User.RestoreFromLocalStorage();
         if (local_data) {
           SetUserData(local_data);
@@ -69,16 +68,13 @@ export const StdContextProvider = ({ children }) => {
       }
     }
 
-    const fetched_data = await User.GetDataFromFirestore(user_id);
+    const fetched_data = await User.GetDataFromFirestore(user_phone_number);
     if (fetched_data) {
       SetUserData(fetched_data);
       SetUserPhoneNumber(fetched_data.phone_number);
       User.UpdateLocalStorage(fetched_data);
     } else {
-      const data = await User.FindExistingUserOrCreateNew(
-        user_id,
-        user_phone_number
-      );
+      const data = await User.FindExistingUserOrCreateNew(user_phone_number);
       SetUserData(data);
       User.UpdateLocalStorage(data);
     }
@@ -86,16 +82,16 @@ export const StdContextProvider = ({ children }) => {
 
   useEffect(() => {
     UpdateUserData();
-  }, [user_id, user_phone_number]);
+  }, [user_phone_number]);
 
   useEffect(() => {
-    if (user_id) {
+    if (user_phone_number) {
       setIsFetching(false);
     }
-  }, [user_id]);
+  }, [user_phone_number]);
 
   const IsSignedIn = () => {
-    return user_id != null && user_id.length > 0;
+    return user_phone_number != null && user_phone_number.length > 0;
   };
 
   const HandleGetUserData = async () => {
@@ -105,9 +101,9 @@ export const StdContextProvider = ({ children }) => {
   };
 
   const HandleSignOut = () => {
-    InvalidateUser();
     try {
       auth.signOut();
+      InvalidateUser();
     } catch (err) {
       console.error(err);
     }
@@ -118,11 +114,10 @@ export const StdContextProvider = ({ children }) => {
       value={{
         user_signing_in,
         SetUserSigningIn: SetUserSigningIn,
-        user_id,
         user_phone_number,
         UpdateUserData: UpdateUserData,
         GetUserData: HandleGetUserData,
-        NoData: () => user_id === null,
+        NoData: () => user_phone_number === null,
         SignedIn: IsSignedIn,
         SignOut: HandleSignOut,
         isFetching,

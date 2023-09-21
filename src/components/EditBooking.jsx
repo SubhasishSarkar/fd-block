@@ -88,7 +88,8 @@ const EditBooking = ({
   editMode = false,
 }) => {
   const navigate = useNavigate();
-  const { NoData, SignedIn, GetUserData, user_id } = useContext(StdContext);
+  const { NoData, SignedIn, GetUserData, user_phone_number } =
+    useContext(StdContext);
   const user_data = GetUserData();
   // Utility functions
   const CreateOptions = (obj) => {
@@ -161,7 +162,7 @@ const EditBooking = ({
         booking_id = bookingObject.id;
       } else {
         booking_id = await Booking.CreateDoc({
-          user_id: user_id,
+          user_id: user_phone_number,
           is_block_member: user_data && user_data["isMember"] === true,
           start_date: start_date,
           end_date: end_date,

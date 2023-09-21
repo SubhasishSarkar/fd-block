@@ -10,6 +10,7 @@ import {
   writeBatch,
   runTransaction,
   arrayUnion,
+  deleteDoc,
 } from "firebase/firestore";
 
 import app from "../firebase.config";
@@ -48,7 +49,7 @@ class User {
 
   static IsLocalStorageUpdated = (user_id) => {
     const local_data = localStorage.getItem(this.LOCAL_STORAGE_USER_ITEM);
-    if (local_data?.id === user_id) return true;
+    if (local_data?.phone_number === user_id) return true;
     return false;
   };
 
@@ -62,7 +63,6 @@ class User {
       is_member: user_data.is_member,
       membership_status: user_data.membership_status,
       created_on: user_data.created_on,
-      user_id: user_data.id,
       isAdmin: user_data.isAdmin,
       plot: user_data.plot,
     };
@@ -108,8 +108,8 @@ class User {
     return null;
   };
 
-  static FindExistingUserOrCreateNew = async (user_id, user_phone_number) => {
-    if (!user_id) return {};
+  static FindExistingUserOrCreateNew = async (user_phone_number) => {
+    if (!user_phone_number) return {};
 
     const db = getFirestore(app);
     const users_collection = collection(db, Collections.USERS);
@@ -129,12 +129,11 @@ class User {
         membership_status: false,
         created_on: new Date(),
         bookings: [],
-        id: user_id,
         isAdmin: false,
       };
 
       const db = getFirestore(app);
-      const users_collection = doc(db, Collections.USERS, new_user.id);
+      const users_collection = doc(db, Collections.USERS, user_phone_number);
       try {
         await setDoc(users_collection, new_user);
         return new_user;
@@ -153,7 +152,7 @@ class User {
     let user_doc_data = null;
     snapshots.forEach((doc) => {
       console.warn("Querying data");
-      if (doc.id === user_id) {
+      if (doc.id === user_phone_number) {
         console.error("ASSERT");
         return {};
       }
@@ -162,7 +161,7 @@ class User {
       // a Firebase generated user ID. In other cases (pre-filled docs, etc), we will fetch
       // the existing doc's data, create a new doc with the doc ID set to the user ID, and
       // remove the existing doc.
-      user_doc_id = doc.id;
+      user_doc_id = doc.phone_number;
       user_doc_data = doc.data();
     });
 
@@ -171,8 +170,8 @@ class User {
       try {
         const batch = writeBatch(db);
         const old_user_doc = doc(db, Collections.USERS, user_doc_id);
-        const new_user_doc = doc(db, Collections.USERS, user_id);
-        user_doc_data["id"] = user_id;
+        const new_user_doc = doc(db, Collections.USERS, user_phone_number);
+        user_doc_data["phone_number"] = user_phone_number;
         batch.set(new_user_doc, user_doc_data);
         batch.delete(old_user_doc);
         await batch.commit();
@@ -204,7 +203,7 @@ class User {
   };
   static Update = async (user_id, user_obj, verify_member_status = false) => {
     const db = getFirestore(app);
-    const user_ref = doc(db, Collections.USERS, user_id);
+    const user_ref = doc(db, Collections.USERS, user_obj.phone_number);
     try {
       await runTransaction(db, async (transaction) => {
         const user_doc = await transaction.get(user_ref);
@@ -235,6 +234,22 @@ class User {
     } catch (err) {
       console.error("Could not update user data");
       console.error(err);
+    }
+  };
+
+  //phone number change
+  static CreateUser = async (oldPhno, user) => {
+    try {
+      const newPhno = user.phone_number;
+      const db = getFirestore(app);
+      const old_users_collection = doc(db, Collections.USERS, oldPhno);
+      const oldDoc = await getDoc(old_users_collection);
+      const oldData = oldDoc.data();
+      const new_users_collection = doc(db, Collections.USERS, newPhno);
+      await setDoc(new_users_collection, { ...oldData, ...user });
+      await deleteDoc(old_users_collection);
+    } catch (err) {
+      console.error("Failed to create new user", err);
     }
   };
 }

@@ -170,7 +170,7 @@ const Bookings = ({ adminView }) => {
   const params = new URLSearchParams(location.search);
   const booking_id = params.get("id");
 
-  const { user_id, isFetching, user_data } = useContext(StdContext);
+  const { user_phone_number, isFetching, user_data } = useContext(StdContext);
   // const user_data = GetUserData();
   const [booking_obj, SetBookingObj] = useState(null);
   const [historyList, setHistoryList] = useState([]);
@@ -203,7 +203,7 @@ const Bookings = ({ adminView }) => {
       if (booking_doc.exists()) {
         console.warn("Querying data");
         const booking_data = booking_doc.data();
-        if (user_data?.isAdmin || booking_data.user_id === user_id) {
+        if (user_data?.isAdmin || booking_data.user_id === user_phone_number) {
           SetShowUnauthorizedAccess(false); // Just in case it was enabled due to some unexpected state-change
           SetBookingObj(booking_doc.data()); // Booking object will get set
           return;
@@ -225,7 +225,7 @@ const Bookings = ({ adminView }) => {
     if (!isFetching && Object.keys(user_data).length > 0) {
       GetBookingDetails();
     }
-  }, [user_data, user_id, isFetching]);
+  }, [user_data, user_phone_number, isFetching]);
 
   useEffect(() => {
     if (booking_obj === null) return;
@@ -266,7 +266,10 @@ const Bookings = ({ adminView }) => {
 
   const HandleBookingAcceptance = async () => {
     SetBookingAcceptanceInProgress(true);
-    await booking_obj.SetBookingStatus(Constants.STATUS_CONFIRMED, user_id);
+    await booking_obj.SetBookingStatus(
+      Constants.STATUS_CONFIRMED,
+      user_phone_number
+    );
     await BlockDates(booking_obj.start_date, booking_obj.end_date);
     setTimeout(() => {
       SetBookingAcceptanceInProgress(false);
@@ -278,7 +281,7 @@ const Bookings = ({ adminView }) => {
   const HandleBookingRejection = async () => {
     await booking_obj.SetBookingStatus(
       Constants.STATUS_REJECTED,
-      user_id,
+      user_phone_number,
       rejectionNote
     );
     await UnblockDates(booking_obj.start_date, booking_obj.end_date);
@@ -324,7 +327,7 @@ const Bookings = ({ adminView }) => {
             {booking_obj === null ||
             Object.keys(booking_obj).length === 0 ? null : (
               <div className=" flex justify-end">
-                {!adminView && booking_obj.user_id === user_id && (
+                {!adminView && booking_obj.user_id === user_phone_number && (
                   <>
                     {booking_obj.status !== Constants.STATUS_CONFIRMED && (
                       <span className="mr-5">

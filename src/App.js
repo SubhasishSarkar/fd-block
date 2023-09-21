@@ -14,6 +14,7 @@ import EditBookingPage from "./components/dashboard/bookings/edit_booking.js";
 import UpdateUser from "./components/dashboard/User/UpdateUser.jsx";
 import AllUsers from "./components/dashboard/admin/features/AllUsers.jsx";
 import AllBookings from "./components/dashboard/admin/features/AllBookings.jsx";
+import BlockDir from "./components/BlockDir.jsx";
 function App() {
   return (
     <div className="App">
@@ -47,6 +48,7 @@ function App() {
                 <Route path="/dashboard/user/update" element={<UpdateUser />} />
                 <Route path="/dashboard/users" element={<AllUsers />} />
                 <Route path="/dashboard/bookings" element={<AllBookings />} />
+                <Route path="/blockdir" element={<BlockDir />} />
               </Route>
             </Route>
           </Routes>

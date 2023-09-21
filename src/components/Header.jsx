@@ -16,28 +16,22 @@ import { Toaster } from "react-hot-toast";
 // Define the URLs and their page titles below
 // TODO: Make this dynamic with graphql
 const routes = new Map();
-routes.set("home", ["/", "Home", true /* left side of navbar */]);
-routes.set("bookings", [
-  "/bookings",
-  "Bookings",
-  true /* left side of navbar */,
-]);
-routes.set("contact", ["/contact", "Contact", true /* left side of navbar */]);
-routes.set("aboutus", ["/aboutus", "About", true /* left side of navbar */]);
-routes.set("login", ["/login", "Login", false /* right side of navbar */]);
+routes.set("home", ["/", "Home"]);
+routes.set("bookings", ["/bookings", "Bookings"]);
+routes.set("contact", ["/contact", "Contact"]);
+routes.set("aboutus", ["/aboutus", "About"]);
+routes.set("blockdir", ["/blockdir", "Block"]);
 
 const Header = () => {
   const location = useLocation();
   const page_route = location?.pathname;
   const navbar_elements = [];
   routes.forEach((page_title, _) => {
-    if (page_title[2]) {
-      navbar_elements.push({
-        route: page_title[0],
-        title: page_title[1],
-        active: page_title[0] === page_route,
-      });
-    }
+    navbar_elements.push({
+      route: page_title[0],
+      title: page_title[1],
+      active: page_title[0] === page_route,
+    });
   });
 
   const { user_phone_number, SignedIn, SignOut, user_data, isFetching } =

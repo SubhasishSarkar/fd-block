@@ -6,22 +6,33 @@ import { StdContext } from "../../../context/StdContext";
 import User from "../../../helpers/User";
 import { Button, Container, Form } from "react-bootstrap";
 import { toast } from "react-hot-toast";
+import { updateBlockDirOnMemberChange } from "../../../helpers/blockDir";
 export function UpdateUserModal() {
   const [show, setShow] = useState(false);
   const [userData, setUserData] = useState();
-  const { user_data, user_id, isFetching } = useContext(StdContext);
+  const { user_data, user_phone_number, isFetching } = useContext(StdContext);
 
   useEffect(() => {
-    if (!isFetching && (user_data?.user_id || user_data?.id)) {
+    if (!isFetching && user_data?.phone_number) {
       setUserData(user_data);
     }
   }, [isFetching, user_data]);
 
   useEffect(() => {
-    if (user_id && (!userData?.name || !userData?.address || !userData?.plot)) {
+    if (
+      user_phone_number &&
+      (!userData?.name || !userData?.address || !userData?.plot)
+    ) {
+      console.log(user_phone_number, userData);
       setShow(true);
     }
   }, [userData]);
+
+  useEffect(() => {
+    if (!user_data) {
+      setShow(false);
+    }
+  }, [user_data]);
 
   return (
     <>
@@ -30,15 +41,25 @@ export function UpdateUserModal() {
           <Modal.Title>Complete your profile</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <UpdateUser userData={userData} uid={user_id} setShow={setShow} />
+          <UpdateUser
+            userData={userData}
+            uid={user_phone_number}
+            setShow={setShow}
+          />
         </Modal.Body>
       </Modal>
     </>
   );
 }
 
-const UpdateUser = ({ userData, uid, setShow, updateProfile = false }) => {
-  const { UpdateUserData } = useContext(StdContext);
+const UpdateUser = ({
+  userData,
+  uid,
+  setShow,
+  updateProfile = false,
+  isAdmin = "false",
+}) => {
+  const { UpdateUserData, SignOut } = useContext(StdContext);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(false);
   const [newPhno, setNewPhno] = useState();
@@ -50,22 +71,28 @@ const UpdateUser = ({ userData, uid, setShow, updateProfile = false }) => {
     address: yup.string().required(),
     plot: yup.string().required(),
     ...(updateProfile && {
-      phno: yup
+      phone_number: yup
         .string()
         .required()
         .matches(phoneRegExp, "Phone number is not valid"),
     }),
+    ...(isAdmin &&
+      !updateProfile && {
+        is_member: yup.boolean(),
+      }),
   });
 
-  const updateUser = async () => {
+  const createNewUserFromExisting = async () => {
     setLoading(true);
-    await User.Update(uid, user);
+    await User.CreateUser(newPhno.old, user);
     await UpdateUserData(true);
+    await updateBlockDirOnMemberChange(user);
     setShow(false);
 
     setStep(1);
     setLoading(false);
     toast.success("Updated your profile");
+    SignOut();
   };
   return (
     <Container>
@@ -75,7 +102,8 @@ const UpdateUser = ({ userData, uid, setShow, updateProfile = false }) => {
             name: userData?.name,
             address: userData?.address,
             plot: userData?.plot,
-            ...(updateProfile && { phno: userData?.phone_number }),
+            phone_number: userData?.phone_number,
+            is_member: userData?.is_member,
           }}
           validationSchema={schema}
           onSubmit={async (values, { setSubmitting }) => {
@@ -85,23 +113,21 @@ const UpdateUser = ({ userData, uid, setShow, updateProfile = false }) => {
               address: values.address || "",
               plot: values.plot || "",
               ...(updateProfile && {
-                phone_number: values.phno || userData.phone_number,
+                phone_number: values.phone_number || userData.phone_number,
               }),
+              is_member: values.is_member,
             };
-
-            // check if already existing
+            console.log(user);
             if (
               updateProfile &&
-              userData.phone_number != values.phno &&
+              userData.phone_number != values.phone_number &&
               (await User.FindExistingUser(user.phone_number))
             ) {
-              toast.error(`${values.phno} is already used`);
-            } else if (updateProfile && userData.phone_number != values.phno) {
-              console.log(
-                userData.phone_number != values.phno,
-                userData.phone_number,
-                values.phno
-              );
+              toast.error(`${values.phone_number} is already used`);
+            } else if (
+              updateProfile &&
+              userData.phone_number != values.phone_number
+            ) {
               setStep(2);
               setUser(user);
               setNewPhno({
@@ -113,10 +139,10 @@ const UpdateUser = ({ userData, uid, setShow, updateProfile = false }) => {
               await User.Update(uid, user);
               await UpdateUserData(true);
               setShow(false);
-
+              updateBlockDirOnMemberChange(user);
               setStep(1);
               setLoading(false);
-              toast.success("Updated your profile");
+              toast.success("Updated");
             }
           }}
         >
@@ -171,19 +197,37 @@ const UpdateUser = ({ userData, uid, setShow, updateProfile = false }) => {
                   <div className="text-danger">{errors.address}</div>
                 ) : null}
               </Form.Text>
+              {isAdmin && updateProfile && (
+                <>
+                  <Form.Label>Is Member?</Form.Label>
+                  <Form.Control
+                    name="is_member"
+                    type="checkbox"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.is_member}
+                    checked={values.is_member}
+                  />
+                  <Form.Text className="text-danger">
+                    {touched.is_member && errors.is_member ? (
+                      <div className="text-danger">{errors.is_member}</div>
+                    ) : null}
+                  </Form.Text>
+                </>
+              )}
               {updateProfile && (
                 <>
                   <Form.Label>Phone number</Form.Label>
                   <Form.Control
-                    name="phno"
+                    name="phone_number"
                     type="text"
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    value={values.phno}
+                    value={values.phone_number}
                   />
                   <Form.Text className="text-danger">
-                    {touched.phno && errors.phno ? (
-                      <div className="text-danger">{errors.phno}</div>
+                    {touched.phone_number && errors.phone_number ? (
+                      <div className="text-danger">{errors.phone_number}</div>
                     ) : null}
                   </Form.Text>
                 </>
@@ -228,7 +272,7 @@ const UpdateUser = ({ userData, uid, setShow, updateProfile = false }) => {
               className="flex-1"
               onClick={() => {
                 setStep(3);
-                updateUser();
+                createNewUserFromExisting();
               }}
             >
               Yes

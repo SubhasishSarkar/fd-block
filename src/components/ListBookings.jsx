@@ -16,7 +16,7 @@ import { Constants, Collections } from "../helpers/constants";
 import Booking from "../helpers/Booking";
 
 const ListBookings = ({ listAll = false }) => {
-  const { NoData, user_id } = useContext(StdContext);
+  const { NoData, user_phone_number } = useContext(StdContext);
   const [bookings, SetBookings] = useState(null);
 
   // On obtaining the user_id from context, fetch the user's booking data-set
@@ -42,7 +42,7 @@ const ListBookings = ({ listAll = false }) => {
         return;
       }
 
-      const user_ref = doc(db, Collections.USERS, user_id);
+      const user_ref = doc(db, Collections.USERS, user_phone_number);
       const user_data = await getDoc(user_ref);
       if (user_data.exists()) {
         let booking_data_set = [];
