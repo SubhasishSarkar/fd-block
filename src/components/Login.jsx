@@ -2,12 +2,12 @@ import { BsFillShieldLockFill, BsTelephoneFill } from "react-icons/bs";
 import { CgSpinner } from "react-icons/cg";
 
 import OtpInput from "otp-input-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { auth } from "../firebase.config";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Login() {
@@ -18,7 +18,21 @@ export default function Login() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const [enableResend, setEnableResend] = useState(true);
   const from = location.state?.from?.pathname || "/";
+
+  useEffect(() => {
+    let interval;
+    if (enableResend && showOTP) {
+      interval = setTimeout(() => {
+        setEnableResend(false);
+      }, 12000);
+    }
+
+    return () => {
+      if (interval) clearTimeout(interval);
+    };
+  }, [enableResend, showOTP]);
 
   function onCaptchVerify() {
     if (!window.recaptchaVerifier) {
@@ -36,7 +50,8 @@ export default function Login() {
     }
   }
 
-  function onSignup() {
+  function onSignup(evt) {
+    evt.preventDefault();
     setLoading(true);
     onCaptchVerify();
 
@@ -49,10 +64,10 @@ export default function Login() {
         window.confirmationResult = confirmationResult;
         setLoading(false);
         setShowOTP(true);
-        toast.success("OTP sended successfully!");
+        toast.success("OTP sent");
       })
       .catch((error) => {
-        console.error(error);
+        toast.error("Unable to send otp");
         setLoading(false);
       });
   }
@@ -63,21 +78,22 @@ export default function Login() {
       .confirm(otp)
       .then(async (res) => {
         setUser(res.user);
-
         setLoading(false);
         navigate(from);
       })
       .catch((err) => {
-        console.error(err);
+        toast.error("OTP verfication failed");
         setLoading(false);
       });
   }
-  //if (user_id) navigate("/");
 
+  function resendOTP(e) {
+    setEnableResend(true);
+    onSignup(e);
+  }
   return (
     <section className=" flex items-start justify-center h-screen">
       <div>
-        {/* <Toaster toastOptions={{ duration: 4000 }} /> */}
         <div id="recaptcha-container"></div>
         {!user && (
           <div className="w-80 flex flex-col gap-4 rounded-lg p-4">
@@ -111,6 +127,21 @@ export default function Login() {
                     " Verify OTP"
                   )}
                 </button>
+                <div className="flex items-center justify-center">
+                  <button
+                    className={
+                      enableResend
+                        ? "text-slate-300"
+                        : "text-green-700 underline decoration-1"
+                    }
+                    onClick={(e) => {
+                      resendOTP(e);
+                    }}
+                    disabled={enableResend}
+                  >
+                    Resend OTP {enableResend && "after 2 min"}
+                  </button>
+                </div>
               </>
             ) : (
               <>

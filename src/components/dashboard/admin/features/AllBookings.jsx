@@ -19,6 +19,15 @@ const columns = [
     editable: false,
   },
   {
+    field: "created_on",
+    headerName: "Booking Date",
+    width: 150,
+    editable: false,
+    renderCell: (value) => {
+      return value.value.toDate().toDateString();
+    },
+  },
+  {
     field: "event_type",
     headerName: "Type",
     width: 150,

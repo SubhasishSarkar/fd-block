@@ -62,7 +62,9 @@ const BookingDetails = ({
   //const { GetUserData, user_data, isFetching } = useContext(StdContext);
   //const user_data = GetUserData();
   const resident =
-    user_data && user_data["isMember"] === true ? "residents" : "non_residents";
+    user_data && user_data["is_member"] === true
+      ? "residents"
+      : "non_residents";
   const event = booking.GetEventType();
   const floor = booking.GetFloorOption();
   const event_floor_unit_cost = cost_table[resident][event][floor];
@@ -243,7 +245,8 @@ const Bookings = ({ adminView }) => {
           });
         }
       }
-      setHistoryList(history);
+      if (adminView) setHistoryList(history);
+      else setHistoryList(history.slice(0, 1));
     };
 
     if (booking_obj) getBookingActions();
@@ -387,7 +390,7 @@ const Bookings = ({ adminView }) => {
         {historyList.length > 0 && (
           <Card className="mt-2">
             <Card.Body>
-              <Card.Title>Action History</Card.Title>
+              <Card.Title>Admin action</Card.Title>
               <div>
                 {/* {historyList === null || historyList.length === 0
                 ? null
@@ -397,18 +400,27 @@ const Bookings = ({ adminView }) => {
                     return <div>{date.toDateString()}</div>;
                   })} */}
               </div>
-              <DataGrid
-                rows={historyList}
-                columns={columns}
-                initialState={{
-                  pagination: {
-                    paginationModel: { page: 0, pageSize: 10 },
-                  },
-                }}
-                pageSizeOptions={[10, 15, 20]}
-                disableRowSelectionOnClick
-                disableDensitySelector
-              />
+              {adminView ? (
+                <DataGrid
+                  rows={historyList}
+                  columns={columns}
+                  initialState={{
+                    pagination: {
+                      paginationModel: { page: 0, pageSize: 10 },
+                    },
+                  }}
+                  pageSizeOptions={[10, 15, 20]}
+                  disableRowSelectionOnClick
+                  disableDensitySelector
+                />
+              ) : (
+                <DataGrid
+                  rows={historyList}
+                  columns={columns}
+                  disableRowSelectionOnClick
+                  disableDensitySelector
+                />
+              )}
             </Card.Body>
           </Card>
         )}

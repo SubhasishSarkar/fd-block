@@ -193,7 +193,7 @@ class Booking {
     return null;
   }
 
-  async UpdateDoc({ start_date, end_date, event_type, floor_option }) {
+  async UpdateDoc({ start_date, end_date, event_type, floor_option, status }) {
     if (this.id === null) {
       console.error("Cannot update document without ID");
       return;
@@ -223,6 +223,8 @@ class Booking {
     if (!this.IsSameFloorOption(floor_option)) {
       updates.floor_option = floor_option;
     }
+
+    updates.status = status;
 
     if (Object.keys(updates).length > 0) {
       console.warn("Updating document");

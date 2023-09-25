@@ -1,5 +1,5 @@
 // Front end
-import React, { useState, Suspense, useContext } from "react";
+import React, { useState, Suspense, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
@@ -21,6 +21,7 @@ import {
 import Booking from "../helpers/Booking";
 import { MoneyFormat, DateDiff, GetSetOfDates } from "../helpers/utils";
 import { StdContext } from "../context/StdContext";
+import { Constants } from "../helpers/constants";
 
 const PriceSummary = ({
   eventFloorUnitCost,
@@ -125,10 +126,25 @@ const EditBooking = ({
   const [floor_options_element, SetFloorOptionsElement] = useState(
     CreateOptions(floor_options[event])
   );
+  const [resident, setResidents] = useState();
+  const [event_floor_unit_cost, set_event_floor_unit_cost] = useState();
+  const [refundable_deposit_cost, set_refundable_deposit_cost] = useState();
+  useEffect(() => {
+    user_data.then((data) => {
+      if (data && data["is_member"] === true) setResidents("residents");
+      else setResidents("non_residents");
+    });
+  }, [user_data]);
 
+  useEffect(() => {
+    if (resident && event && floor) {
+      set_event_floor_unit_cost(cost_table[resident][event][floor]);
+      set_refundable_deposit_cost(
+        cost_table[resident][event]["security_deposit"]
+      );
+    }
+  }, [resident, event, floor]);
   // Costs are different for block-residents and non-residents, for which we first have to determine what kind of user we are dealing with
-  const resident =
-    user_data && user_data["isMember"] === true ? "residents" : "non_residents";
 
   // Get a set of epoch timestamps denoting the dates which are to be shown as unblocked (if in edit mode)
   const unblock_dates =
@@ -158,12 +174,13 @@ const EditBooking = ({
           end_date: end_date,
           event_type: event,
           floor_option: floor,
+          status: Constants.STATUS_REQUEST,
         });
         booking_id = bookingObject.id;
       } else {
         booking_id = await Booking.CreateDoc({
           user_id: user_phone_number,
-          is_block_member: user_data && user_data["isMember"] === true,
+          is_block_member: user_data && user_data["is_member"] === true,
           start_date: start_date,
           end_date: end_date,
           event_type: event,
@@ -188,9 +205,6 @@ const EditBooking = ({
   const date_diff = DateDiff(start_date, end_date);
 
   // Fetch data from the cost table
-  const event_floor_unit_cost = cost_table[resident][event][floor];
-  const refundable_deposit_cost =
-    cost_table[resident][event]["security_deposit"];
 
   if (NoData()) {
     // When the user's logged in state is yet to be determined, show a loading animation

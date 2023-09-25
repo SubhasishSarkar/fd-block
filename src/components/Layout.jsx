@@ -3,7 +3,7 @@ import Header from "./Header";
 import { Footer } from "flowbite-react";
 import { Outlet } from "react-router-dom";
 import { UpdateUserModal } from "./dashboard/User/UpdateUser";
-
+import { ToastContainer } from "react-toastify";
 export default function Layout({
   enableBackgroundPattern = true,
   className = "",
@@ -23,6 +23,15 @@ export default function Layout({
       <div className="bg-white">
         <Header />
       </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable={false}
+      />
       <div className={style_classes}>
         {enableBackgroundPattern ? (
           <div className="-z-10 fixed top-0 left-0 w-full h-full opacity-70 bg-polka bg-[length:32px_32px]" />

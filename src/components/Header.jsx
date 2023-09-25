@@ -10,7 +10,6 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 
 // Internal
 import { StdContext } from "../context/StdContext";
-import { Toaster } from "react-hot-toast";
 //import fd_block_logo from "/public/assets/images/fdblock.png";
 
 // Define the URLs and their page titles below
@@ -92,8 +91,6 @@ const Header = () => {
     //     </Navbar.Collapse>
     // </Navbar>
     <Navbar expand="lg" className="bg-body-tertiary">
-      {/* <UpdateUser /> */}
-      <Toaster toastOptions={{ duration: 4000 }} />
       <Container>
         <Navbar.Brand href="/">
           <img

@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import { StdContext } from "../../../context/StdContext";
 import User from "../../../helpers/User";
 import { Button, Container, Form } from "react-bootstrap";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 import { updateBlockDirOnMemberChange } from "../../../helpers/blockDir";
 export function UpdateUserModal() {
   const [show, setShow] = useState(false);
