@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { getDoc, getFirestore, getDocs, collection } from "firebase/firestore";
+import {
+  getDoc,
+  getFirestore,
+  getDocs,
+  collection,
+  Timestamp,
+  where,
+} from "firebase/firestore";
 import app from "../../../../firebase.config.js";
 import { Collections } from "../../../../helpers/constants";
 import { Box, Chip, Tab } from "@mui/material";
@@ -24,7 +31,9 @@ const columns = [
     width: 150,
     editable: false,
     renderCell: (value) => {
-      return value.value.toDate().toDateString();
+      return typeof value.value == "number"
+        ? Timestamp.fromDate(new Date(value.value)).toDate().toDateString()
+        : value.value.toDate().toDateString();
     },
   },
   {
@@ -100,7 +109,7 @@ function AllBookings() {
       const db = getFirestore(app);
       let user_data_set = [];
       const user_collection = collection(db, Collections.USERS);
-      const users = await getDocs(user_collection);
+      const users = await getDocs(user_collection, where("bookings", "!=", []));
       users.forEach((doc) => {
         const user_obj = doc.data();
         user_data_set.push(user_obj);

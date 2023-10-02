@@ -35,61 +35,12 @@ const Header = () => {
 
   const { user_phone_number, SignedIn, SignOut, user_data, isFetching } =
     useContext(StdContext);
+
+  const handleAddUser = (e) => {
+    e.preventDefault();
+  };
+
   return (
-    // <Navbar fluid={true} rounded={true}>
-    //     <Navbar.Brand href="/">
-    //         <img src="assets/images/fdblock.png" className="mr-3 h-6 sm:h-9" alt="fdblock.org logo" />
-    //         <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">fdblock.org</span>
-    //     </Navbar.Brand>
-    //     <div className="flex md:order-2">
-    //         {NoData() ? (
-    //             <Spinner aria-label="Default status example" />
-    //         ) : SignedIn() ? (
-    //             <div className="flex md:order-2">
-    //                 <Dropdown arrowIcon={false} inline={true} label={<TfiUser className="text-2xl" />}>
-    //                     <Dropdown.Header>
-    //                         <span className="block text-sm">{user_data?.name}</span>
-    //                         <span className="block truncate text-sm font-medium">{user_phone_number}</span>
-    //                     </Dropdown.Header>
-    //                     <Dropdown.Item>
-    //                         <Link to="/dashboard/profile">Profile</Link>
-    //                     </Dropdown.Item>
-    //                     <Dropdown.Item>
-    //                         <Link to="/dashboard/bookings">Bookings</Link>
-    //                     </Dropdown.Item>
-    //                     <Dropdown.Item>
-    //                         <Link to="/dashboard/block-dir">Block Directory</Link>
-    //                     </Dropdown.Item>
-    //                     <Dropdown.Divider />
-    //                     {user_data?.is_admin ? (
-    //                         <>
-    //                             <Dropdown.Item>
-    //                                 <Link to="/dashboard/admin/manage-bookings">Manage Bookings</Link>
-    //                             </Dropdown.Item>
-    //                             <Dropdown.Item>
-    //                                 <Link to="/dashboard/admin/manage-users">Manage Users</Link>
-    //                             </Dropdown.Item>
-    //                             <Dropdown.Divider />
-    //                         </>
-    //                     ) : null}
-    //                     <Dropdown.Item onClick={e => SignOut()}>Sign out</Dropdown.Item>
-    //                 </Dropdown>
-    //             </div>
-    //         ) : (
-    //             <Navbar.Link href={routes.get("login")[0]}>
-    //                 <span className="">{routes.get("login")[1]}</span>
-    //             </Navbar.Link>
-    //         )}
-    //     <Navbar.Toggle />
-    //     </div>
-    //     <Navbar.Collapse>
-    //         {navbar_elements.map(navbar_link => (
-    //             <Navbar.Link key={navbar_link.route} href={navbar_link.route} active={navbar_link.active}>
-    //                 {navbar_link.title}
-    //             </Navbar.Link>
-    //         ))}
-    //     </Navbar.Collapse>
-    // </Navbar>
     <Navbar expand="lg" className="bg-body-tertiary">
       <Container>
         <Navbar.Brand href="/">
@@ -119,6 +70,9 @@ const Header = () => {
                 </LinkContainer>
                 <LinkContainer to="dashboard/bookings">
                   <NavDropdown.Item>Bookings</NavDropdown.Item>
+                </LinkContainer>
+                <LinkContainer to="dashboard/user/add">
+                  <NavDropdown.Item>Add User</NavDropdown.Item>
                 </LinkContainer>
               </NavDropdown>
             )}

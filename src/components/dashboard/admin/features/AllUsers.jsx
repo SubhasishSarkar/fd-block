@@ -59,6 +59,17 @@ const columns = [
       return <Chip label="No" color="error" />;
     },
   },
+  {
+    field: "is_permanent_member",
+    headerName: "Is Lifetime Member",
+    width: 150,
+    editable: false,
+    renderCell: (value) => {
+      if (value.value) return <Chip label="Yes" color="success" />;
+
+      return <Chip label="No" color="error" />;
+    },
+  },
 ];
 
 function AllUsers() {

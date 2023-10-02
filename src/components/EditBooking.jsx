@@ -87,11 +87,17 @@ const EditBooking = ({
   endDate = new Date(),
   bookingObject = null,
   editMode = false,
+  uid = null,
 }) => {
   const navigate = useNavigate();
-  const { NoData, SignedIn, GetUserData, user_phone_number } =
-    useContext(StdContext);
-  const user_data = GetUserData();
+  const {
+    NoData,
+    SignedIn,
+    GetUserData,
+    user_phone_number,
+    isFetching,
+    user_data,
+  } = useContext(StdContext);
   // Utility functions
   const CreateOptions = (obj) => {
     const options = [];
@@ -130,11 +136,12 @@ const EditBooking = ({
   const [event_floor_unit_cost, set_event_floor_unit_cost] = useState();
   const [refundable_deposit_cost, set_refundable_deposit_cost] = useState();
   useEffect(() => {
-    user_data.then((data) => {
-      if (data && data["is_member"] === true) setResidents("residents");
+    if (!isFetching && user_data != null) {
+      if (user_data && user_data["is_member"] === true)
+        setResidents("residents");
       else setResidents("non_residents");
-    });
-  }, [user_data]);
+    }
+  }, [user_data, isFetching]);
 
   useEffect(() => {
     if (resident && event && floor) {
@@ -165,8 +172,11 @@ const EditBooking = ({
   };
 
   const HandleProceed = async (e) => {
+    e.preventDefault();
+
     SetRequestHandleInProcess(true);
     let booking_id = null;
+
     try {
       if (editMode) {
         await bookingObject.UpdateDoc({
@@ -178,8 +188,13 @@ const EditBooking = ({
         });
         booking_id = bookingObject.id;
       } else {
+        let phone_number = user_phone_number;
+        if (user_data?.isAdmin && uid) {
+          phone_number = "+" + uid.trim();
+        }
+
         booking_id = await Booking.CreateDoc({
-          user_id: user_phone_number,
+          user_id: phone_number,
           is_block_member: user_data && user_data["is_member"] === true,
           start_date: start_date,
           end_date: end_date,
@@ -206,17 +221,11 @@ const EditBooking = ({
 
   // Fetch data from the cost table
 
-  if (NoData()) {
+  if (isFetching) {
     // When the user's logged in state is yet to be determined, show a loading animation
-    return <LoadingAnimation />;
+    return <p>Loading...</p>;
   }
 
-  if (!SignedIn()) {
-    // Display a redirecting message and navigate on timeout
-    navigate("/bookings");
-  }
-
-  // console.info(`resident = ${resident}  |  event = ${event}  |  floor = ${floor}`);
   return (
     <Card>
       {editMode === false ? (

@@ -1559,6 +1559,7 @@ export const addToFirebase = async () => {
       phone_number: user_data.phoneNumber,
       address: "",
       is_member: true,
+      is_permanent_member: false,
       membership_status: false,
       created_on: Date.now(),
       isAdmin: false,

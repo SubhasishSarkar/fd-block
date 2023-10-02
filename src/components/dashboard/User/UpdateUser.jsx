@@ -7,7 +7,7 @@ import User from "../../../helpers/User";
 import { Button, Container, Form } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { updateBlockDirOnMemberChange } from "../../../helpers/blockDir";
-export function UpdateUserModal() {
+export function UpdateUserModal(addUser = false) {
   const [show, setShow] = useState(false);
   const [userData, setUserData] = useState();
   const { user_data, user_phone_number, isFetching } = useContext(StdContext);
@@ -78,6 +78,7 @@ const UpdateUser = ({
     ...(isAdmin &&
       !updateProfile && {
         is_member: yup.boolean(),
+        is_permanent_member: yup.boolean(),
       }),
   });
 
@@ -103,6 +104,7 @@ const UpdateUser = ({
             plot: userData?.plot,
             phone_number: userData?.phone_number,
             is_member: userData?.is_member,
+            is_permanent_member: userData?.is_permanent_member,
           }}
           validationSchema={schema}
           onSubmit={async (values, { setSubmitting }) => {
@@ -115,6 +117,7 @@ const UpdateUser = ({
                 phone_number: values.phone_number || userData.phone_number,
               }),
               is_member: values.is_member,
+              is_permanent_member: values.is_permanent_member,
             };
             if (
               updateProfile &&
@@ -197,20 +200,41 @@ const UpdateUser = ({
               </Form.Text>
               {isAdmin && updateProfile && (
                 <>
-                  <Form.Label>Is Member?</Form.Label>
-                  <Form.Control
-                    name="is_member"
-                    type="checkbox"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.is_member}
-                    checked={values.is_member}
-                  />
-                  <Form.Text className="text-danger">
-                    {touched.is_member && errors.is_member ? (
-                      <div className="text-danger">{errors.is_member}</div>
-                    ) : null}
-                  </Form.Text>
+                  <div>
+                    <Form.Label>Is Member?</Form.Label>
+                    <Form.Control
+                      name="is_member"
+                      type="checkbox"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.is_member}
+                      checked={values.is_member}
+                    />
+                    <Form.Text className="text-danger">
+                      {touched.is_member && errors.is_member ? (
+                        <div className="text-danger">{errors.is_member}</div>
+                      ) : null}
+                    </Form.Text>
+                  </div>
+                  <div>
+                    <Form.Label>Is Lifetime Member?</Form.Label>
+                    <Form.Control
+                      name="is_permanent_member"
+                      type="checkbox"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.is_permanent_member}
+                      checked={values.is_permanent_member}
+                    />
+                    <Form.Text className="text-danger">
+                      {touched.is_permanent_member &&
+                      errors.is_permanent_member ? (
+                        <div className="text-danger">
+                          {errors.is_permanent_member}
+                        </div>
+                      ) : null}
+                    </Form.Text>
+                  </div>
                 </>
               )}
               {updateProfile && (

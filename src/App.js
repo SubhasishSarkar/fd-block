@@ -11,10 +11,10 @@ import Bookings from "./components/dashboard/bookings/index.js";
 import Profile from "./components/dashboard/User/Profile.jsx";
 import AboutUs from "./components/AboutUs.jsx";
 import EditBookingPage from "./components/dashboard/bookings/edit_booking.js";
-import UpdateUser from "./components/dashboard/User/UpdateUser.jsx";
 import AllUsers from "./components/dashboard/admin/features/AllUsers.jsx";
 import AllBookings from "./components/dashboard/admin/features/AllBookings.jsx";
 import BlockDir from "./components/BlockDir.jsx";
+import AddUser from "./components/dashboard/admin/features/AddUser.jsx";
 function App() {
   return (
     <div className="App">
@@ -45,7 +45,7 @@ function App() {
                   path="/dashboard/bookings/edit_booking"
                   element={<EditBookingPage />}
                 />
-                <Route path="/dashboard/user/update" element={<UpdateUser />} />
+                <Route path="/dashboard/user/add" element={<AddUser />} />
                 <Route path="/dashboard/users" element={<AllUsers />} />
                 <Route path="/dashboard/bookings" element={<AllBookings />} />
                 <Route path="/blockdir" element={<BlockDir />} />

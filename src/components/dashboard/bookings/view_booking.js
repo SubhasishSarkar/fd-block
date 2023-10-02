@@ -189,8 +189,8 @@ const Bookings = ({ adminView }) => {
   const [show_accept_booking_request, SetShowAcceptBookingRequest] =
     useState(false);
 
-  const [rejectionNote, setRejectionNote] = useState("");
-
+  const [rejectionNote, setRejectionNote] = useState(null);
+  const [error, setError] = useState(false);
   useEffect(() => {
     if (booking_obj !== null) return;
 
@@ -230,9 +230,10 @@ const Bookings = ({ adminView }) => {
   }, [user_data, user_phone_number, isFetching]);
 
   useEffect(() => {
-    if (booking_obj === null) return;
+    if (booking_obj === null || booking_obj === undefined) return;
     const getBookingActions = async () => {
       let history = [];
+      console.log(booking_obj);
       const history_data = booking_obj.modified_by;
       for (let idx = 0; idx < history_data.length; idx++) {
         const user_doc = await getDoc(history_data[idx].modifier);
@@ -282,6 +283,12 @@ const Bookings = ({ adminView }) => {
   };
 
   const HandleBookingRejection = async () => {
+    if (rejectionNote) {
+      setError(false);
+    } else {
+      setError(true);
+      return;
+    }
     await booking_obj.SetBookingStatus(
       Constants.STATUS_REJECTED,
       user_phone_number,
@@ -535,6 +542,11 @@ const Bookings = ({ adminView }) => {
                 value={rejectionNote}
                 onChange={(e) => setRejectionNote(e.target.value)}
               />
+              <Form.Text className="text-danger">
+                {error && (
+                  <div className="text-danger">Please enter a reason</div>
+                )}
+              </Form.Text>
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -542,6 +554,7 @@ const Bookings = ({ adminView }) => {
           <Button
             variant="secondary"
             onClick={() => {
+              setError(false);
               SetShowCancelBookingRequest(false);
               setRejectionNote("");
             }}

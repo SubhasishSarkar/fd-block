@@ -5,9 +5,10 @@ import { Card, Modal } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import UpdateUser from "./UpdateUser";
 import User from "../../../helpers/User";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 function Profile({ adminView = false, userId }) {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const uid = searchParams.get("uid");
   const [show, setShow] = useState(false);
@@ -56,18 +57,29 @@ function Profile({ adminView = false, userId }) {
           </Table>
         </Card.Body>
         <Card.Footer>
-          <Button
-            onClick={() => {
-              setShow(true);
-            }}
-          >
-            Edit profile
-          </Button>
+          <div className="flex justify-end gap-2">
+            <Button
+              onClick={() => {
+                setShow(true);
+              }}
+            >
+              Edit profile
+            </Button>
+            {user_data.isAdmin && (
+              <Button
+                onClick={() => {
+                  navigate(`/bookings?uid=${uid}`);
+                }}
+              >
+                Create Booking
+              </Button>
+            )}
+          </div>
         </Card.Footer>
       </Card>
       <Modal show={show} onHide={() => setShow(false)}>
         <Modal.Header closeButton={true}>
-          <Modal.Title>Complete your profile</Modal.Title>
+          <Modal.Title>Edit profile</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <UpdateUser

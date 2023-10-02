@@ -15,6 +15,7 @@ import {
 
 import app from "../firebase.config";
 import { Constants, Collections, DocNames } from "./constants";
+import { updateBlockDirOnMemberChange } from "./blockDir";
 
 /*
  * * * * * * * * * * * * *
@@ -46,6 +47,7 @@ class User {
   static KEY_ADDRESS = "address";
   static KEY_PHONE_NUM = "phone_number";
   static KEY_IS_MEMBER = "is_member";
+  static KEY_IS_PERMANENT_MEMBER = "is_permanent_member";
 
   static IsLocalStorageUpdated = (user_id) => {
     const local_data = localStorage.getItem(this.LOCAL_STORAGE_USER_ITEM);
@@ -61,6 +63,7 @@ class User {
       phone_number: user_data.phone_number,
       address: user_data.address,
       is_member: user_data.is_member,
+      is_permanent_member: user_data.is_permanent_member,
       membership_status: user_data.membership_status,
       created_on: user_data.created_on,
       isAdmin: user_data.isAdmin,
@@ -126,6 +129,7 @@ class User {
         phone_number: user_phone_number,
         address: "",
         is_member: false,
+        is_permanent_member: false,
         membership_status: false,
         created_on: new Date(),
         bookings: [],
@@ -250,6 +254,39 @@ class User {
       await deleteDoc(old_users_collection);
     } catch (err) {
       console.error("Failed to create new user", err);
+    }
+  };
+
+  static CreateNewUser = async (user) => {
+    try {
+      const user_phone_number = user.phone_number;
+      const db = getFirestore(app);
+      const users_collection = collection(db, Collections.USERS);
+      const q = query(
+        users_collection,
+        where("phone_number", "==", user_phone_number)
+      );
+      const snapshots = await getDocs(q);
+      if (snapshots.empty) {
+        const new_users_collection = doc(
+          db,
+          Collections.USERS,
+          user_phone_number
+        );
+        await setDoc(new_users_collection, {
+          ...user,
+          membership_status: false,
+          created_on: new Date(),
+          bookings: [],
+          isAdmin: false,
+        });
+        await updateBlockDirOnMemberChange(user);
+        return user;
+      } else {
+        throw "Phone number already taken";
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 }

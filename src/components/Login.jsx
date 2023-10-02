@@ -165,7 +165,6 @@ export default function Login() {
             )}
           </div>
         )}
-        {/* {newUser && <UpdateUser />} */}
       </div>
     </section>
   );

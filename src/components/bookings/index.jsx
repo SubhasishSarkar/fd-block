@@ -1,5 +1,5 @@
 import React, { useState, Suspense } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Spinner } from "flowbite-react";
 
 import CommunityHallImageSlider from "../SvgCommunityGroup";
@@ -7,12 +7,16 @@ import DatePicker from "../DatePicker";
 import Button from "react-bootstrap/Button";
 
 export default function BookingsPage() {
+  const [searchParams] = useSearchParams();
+  const uid = searchParams.get("uid");
   const [start_date, SetStartDate] = useState(new Date());
   const [end_date, SetEndDate] = useState(new Date());
   const navigate = useNavigate();
 
   function Proceed(e) {
-    const url_query = `?sd=${start_date.valueOf()}&ed=${end_date.valueOf()}`;
+    const url_query = uid
+      ? `?sd=${start_date.valueOf()}&ed=${end_date.valueOf()}&uid=${uid}`
+      : `?sd=${start_date.valueOf()}&ed=${end_date.valueOf()}`;
     navigate(`/bookings/complete-booking${url_query}`);
   }
   return (

@@ -55,6 +55,16 @@ const columns = [
     width: 200,
     editable: false,
   },
+  {
+    field: "is_permanent_member",
+    headerName: "Is Lifetime Member?",
+    width: 200,
+    editable: false,
+    renderCell: (value) => {
+      if (value.value) return <Chip label="Yes" color="success" />;
+      return <Chip label="No" color="error" />;
+    },
+  },
 ];
 
 function BlockDir() {
