@@ -15,7 +15,7 @@ const Bookings = () => {
   }
   return (
     <div className="w-full">
-      <Card>
+      <Card className="p-2">
         <h3 className="text-xl">My Bookings</h3>
         <ListBookings /* listAll = false, i.e., user only */ />
       </Card>

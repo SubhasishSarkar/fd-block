@@ -73,7 +73,7 @@ const BookingDetails = ({
   const date_diff = booking.GetDuration();
 
   return (
-    <div className="flex space-x-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2">
       <div className="flex-1 p-2">
         <Table>
           <Table.Body>
@@ -121,6 +121,7 @@ const BookingDetails = ({
           </Table.Body>
         </Table>
       </div>
+      <hr className="sm:hidden" />
       <div className="flex flex-col flex-1">
         <PriceSummary
           eventFloorUnitCost={event_floor_unit_cost}
@@ -129,8 +130,8 @@ const BookingDetails = ({
           show_heading={false}
           styles="text-base"
         />
-        <Paper elevation="2" className="p-4">
-          <span>Booking Status</span>
+        <Paper elevation="1" className="p-2">
+          <span className="text-lg font-bold">Status : </span>
           <span>
             {booking.status === Constants.STATUS_CONFIRMED && (
               <Chip
@@ -140,24 +141,24 @@ const BookingDetails = ({
               ></Chip>
             )}
             {booking.status === Constants.STATUS_REJECTED && (
-              <div>
+              <>
                 <Chip
                   icon={<CancelIcon />}
                   label="Your booking is rejected"
                   color="error"
                 ></Chip>
-                <div>{booking.comments.rejection_reason}</div>
-              </div>
+                <div>
+                  <span className="text-lg font-bold">Remark : </span>{" "}
+                  {booking.comments.rejection_reason}
+                </div>
+              </>
             )}
             {booking.status === Constants.STATUS_REQUEST && (
-              <div>
-                <Chip
-                  icon={<PendingIcon />}
-                  label="Pending admin action"
-                  color="warning"
-                ></Chip>
-                <div>{booking.comments.rejection_reason}</div>
-              </div>
+              <Chip
+                icon={<PendingIcon />}
+                label="Pending admin action"
+                color="warning"
+              ></Chip>
             )}
           </span>
         </Paper>
@@ -312,7 +313,7 @@ const Bookings = ({ adminView }) => {
           <Card.Body>
             <Card.Title>Booking Details</Card.Title>
             <div>
-              <div className="">
+              <div>
                 {show_unauthorized_access ? (
                   <Alert color="failure">
                     <span>

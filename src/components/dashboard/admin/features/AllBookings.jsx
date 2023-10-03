@@ -24,6 +24,9 @@ const columns = [
     headerName: "Id",
     width: 150,
     editable: false,
+    renderCell: (value) => {
+      return <div className="cursor-pointer font-bold">{value.value}</div>;
+    },
   },
   {
     field: "created_on",

@@ -24,7 +24,7 @@ export default function BookingsPage() {
       <div className="text-4xl text-center pt-10 mb-10">
         Community Hall Booking
       </div>
-      <div className="flex justify-center w-full mt-20 mb-14">
+      <div className="grid grid-cols-1 sm:grid-cols-2">
         <CommunityHallImageSlider className="min-w-[50%]" />
         <div className="flex flex-col items-center content-center justify-center w-full mb-14">
           <Suspense

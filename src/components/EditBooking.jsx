@@ -22,6 +22,7 @@ import Booking from "../helpers/Booking";
 import { MoneyFormat, DateDiff, GetSetOfDates } from "../helpers/utils";
 import { StdContext } from "../context/StdContext";
 import { Constants } from "../helpers/constants";
+import { toast } from "react-toastify";
 
 const PriceSummary = ({
   eventFloorUnitCost,
@@ -204,6 +205,7 @@ const EditBooking = ({
       }
 
       setTimeout(() => {
+        toast.success("Booking request created");
         SetRequestHandleInProcess(false);
         SetShowModal(false);
         if (booking_id)
@@ -241,54 +243,63 @@ const EditBooking = ({
           <hr />
         </div>
       )}
-      <div className="flex flex-col mt-7">
+      <div>
         {/***** End of calendar and billing details *****/}
-        <div className="flex justify-evenly">
-          <Suspense
-            fallback={
-              <Spinner color="success" aria-label="Success spinner example" />
-            }
-          >
-            <Datepicker
-              StartDate={start_date}
-              SetStartDate={SetStartDate}
-              EndDate={end_date}
-              SetEndDate={SetEndDate}
-              unblockedSetOfDates={unblock_dates}
-            />
-          </Suspense>
-          <div>
-            {/***** Event type dropdown menu *****/}
-            <div className="mb-2 block">
-              <span className="text-xl">Purpose of booking</span>
-            </div>
-            <div className="mt-3">
-              <Select
-                value={event}
-                onChange={HandleEventTypeChange}
-                id="event-type"
-                required={true}
-              >
-                {event_types_element}
-              </Select>
-            </div>
-            {/***** End of event type dropdown menu *****/}
+        <div className="grid grid-cols-1 sm:grid-cols-2">
+          <div className="p-2 flex justify-center items-center">
+            <Suspense
+              fallback={
+                <Spinner color="success" aria-label="Success spinner example" />
+              }
+            >
+              <Datepicker
+                StartDate={start_date}
+                SetStartDate={SetStartDate}
+                EndDate={end_date}
+                SetEndDate={SetEndDate}
+                unblockedSetOfDates={unblock_dates}
+              />
+            </Suspense>
+          </div>
 
-            {/***** Floor dropdown menu *****/}
-            <div className="mb-2 block mt-7">
-              <span className="text-xl">Number of floors</span>
-            </div>
-            <div className="mt-3">
-              <Select
-                value={floor}
-                onChange={HandleFloorChange}
-                required={true}
-              >
-                {floor_options_element}
-              </Select>
-            </div>
-            {/***** End of floor dropdown menu *****/}
+          <div className="p-2">
+            <div>
+              {/***** Event type dropdown menu *****/}
+              <div>
+                <div className="">
+                  <span className="text-xl">Purpose of booking</span>
+                </div>
+                <div className="mt-3">
+                  <Select
+                    value={event}
+                    onChange={HandleEventTypeChange}
+                    id="event-type"
+                    required={true}
+                  >
+                    {event_types_element}
+                  </Select>
+                </div>
+              </div>
 
+              {/***** End of event type dropdown menu *****/}
+
+              {/***** Floor dropdown menu *****/}
+              <div>
+                <div className="mb-2 block mt-7">
+                  <span className="text-xl">Number of floors</span>
+                </div>
+                <div className="mt-3">
+                  <Select
+                    value={floor}
+                    onChange={HandleFloorChange}
+                    required={true}
+                  >
+                    {floor_options_element}
+                  </Select>
+                </div>
+              </div>
+              {/***** End of floor dropdown menu *****/}
+            </div>
             {/***** Price summary *****/}
             {editMode === false ? (
               <PriceSummary
@@ -323,22 +334,22 @@ const EditBooking = ({
         ) : null}
 
         {/***** Cancellation and security deposite details *****/}
-        <span className="mt-14">
-          <hr />
-        </span>
-        <div className="flex justify-evenly mt-14 mb-7">
-          <div className="text-slate-500">
+
+        <hr />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 px-4 my-7">
+          <div className="text-slate-500 py-2">
             <h5 className="text-lg font-semibold">Cancellation Policy</h5>
-            <ul className="list-none mt-5">
+            <ul className="list-none mt-1">
               <li>Prior to three days before event: 75% of the cost</li>
               <li>One to three days before event: 50% of the cost</li>
               <li>On the day of the event: ₹0 will be refunded</li>
               <li>Nothing will be deducted from the security deposit</li>
             </ul>
           </div>
-          <div className="text-slate-500">
+          <div className="text-slate-500 py-2">
             <h5 className="text-lg font-semibold">Security Deposit</h5>
-            <ul className="list-none mt-5">
+            <ul className="list-none mt-1">
               <li>Electricity consumption will be deducted</li>
               <li>
                 Lift usage cost will be deducted (₹500 per every 12 hours)
@@ -363,7 +374,7 @@ const EditBooking = ({
         <Modal.Body>
           {request_handle_in_process === false ? (
             <div className="text-center">
-              <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+              <h3 className="mb-2 text-lg font-normal text-gray-500 dark:text-gray-400">
                 Confirm {editMode === true ? "changes to" : ""} this booking
                 request?
               </h3>
@@ -383,7 +394,7 @@ const EditBooking = ({
             </div>
           ) : (
             <div className="flex flex-col text-center">
-              <span className="mb-5 text-lg">
+              <span className="mb-2 text-lg">
                 {editMode === true ? "Updating" : "Creating"} booking request
               </span>
               <div>
@@ -396,9 +407,9 @@ const EditBooking = ({
               </div>
             </div>
           )}
-          <div className="text-slate-500 mt-10">
-            <hr />
-            <h5 className="text-base font-semibold mt-5 text-left">Note</h5>
+          <hr className="my-4" />
+          <div className="text-slate-500">
+            <h5 className="text-base font-semibold mt-2 text-left">Note</h5>
             <ul className="list-none text-sm mt-2 text-left">
               <li>This request will be notified to the block committee.</li>
               <li>

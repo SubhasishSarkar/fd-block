@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "./Header";
 import { Footer } from "flowbite-react";
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import { UpdateUserModal } from "./dashboard/User/UpdateUser";
 import { ToastContainer } from "react-toastify";
 export default function Layout({
@@ -39,17 +39,25 @@ export default function Layout({
           ""
         )}
         <Outlet />
-        <div className="mt-7">
-          <Footer container={true}>
-            <Footer.Copyright href="/" by="fdblock.org" year={2022} />
-            <Footer.LinkGroup>
-              <Footer.Link href="/">Home</Footer.Link>
-              <Footer.Link href="/bookings">Bookings</Footer.Link>
-              <Footer.Link href="/contact">Contact</Footer.Link>
-              <Footer.Link href="/about">About</Footer.Link>
-            </Footer.LinkGroup>
-          </Footer>
-        </div>
+      </div>
+      <div className="mt-7">
+        <Footer container={true} className="p-2">
+          <Footer.Copyright by="fdblock.org" year={2022} />
+          <Footer.LinkGroup className="flex gap-2">
+            <Footer.Link>
+              <Link to="/">Home</Link>
+            </Footer.Link>
+            <Footer.Link>
+              <Link to="/bookings">Bookings</Link>
+            </Footer.Link>
+            <Footer.Link>
+              <Link to="/contact">Contact</Link>
+            </Footer.Link>
+            <Footer.Link>
+              <Link to="/aboutus">About</Link>
+            </Footer.Link>
+          </Footer.LinkGroup>
+        </Footer>
       </div>
     </div>
   );

@@ -16,7 +16,7 @@ const columns = [
     renderCell: (value) => {
       if (value.row.isAdmin)
         return (
-          <div>
+          <div className="cursor-pointer font-bold">
             {value.value + "  "}
             <Chip
               label="Admin"
@@ -27,7 +27,7 @@ const columns = [
           </div>
         );
 
-      return value.value;
+      return <div className="cursor-pointer font-bold">{value.value}</div>;
     },
   },
   {
