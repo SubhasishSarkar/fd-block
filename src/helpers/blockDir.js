@@ -1,12 +1,7 @@
 import {
-  addDoc,
-  collection,
   doc,
   getDoc,
-  getDocs,
   getFirestore,
-  query,
-  runTransaction,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
@@ -1559,7 +1554,7 @@ export const addToFirebase = async () => {
       phone_number: user_data.phoneNumber,
       address: "",
       is_member: true,
-      is_permanent_member: false,
+      is_permanent_member: true,
       membership_status: false,
       created_on: Date.now(),
       isAdmin: false,
@@ -1574,6 +1569,7 @@ export const createBlockDirFromUsers = async () => {
   const db = getFirestore(app);
   const result = {};
   list.forEach((doc) => {
+    doc.is_permanent_member = true;
     if (doc.phoneNumber != "") result[doc.phoneNumber] = doc;
     else result[doc.name] = doc;
   });

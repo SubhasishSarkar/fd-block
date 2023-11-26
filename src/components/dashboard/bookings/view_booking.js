@@ -62,7 +62,7 @@ const BookingDetails = ({
   //const { GetUserData, user_data, isFetching } = useContext(StdContext);
   //const user_data = GetUserData();
   const resident =
-    user_data && user_data["is_member"] === true
+    user_data && user_data["is_permanent_member"] === true
       ? "residents"
       : "non_residents";
   const event = booking.GetEventType();
@@ -115,6 +115,11 @@ const BookingDetails = ({
                   <span className="text-base">
                     {booking.GetFloorOptionString()}
                   </span>
+                </div>
+                <hr className="my-3" />
+                <div className="flex justify-between text-black">
+                  <span className="text-lg font-semibold">Reference of</span>
+                  <span className="text-base">{booking.reference}</span>
                 </div>
               </Table.Cell>
             </Table.Row>
@@ -234,7 +239,6 @@ const Bookings = ({ adminView }) => {
     if (booking_obj === null || booking_obj === undefined) return;
     const getBookingActions = async () => {
       let history = [];
-      console.log(booking_obj);
       const history_data = booking_obj.modified_by;
       for (let idx = 0; idx < history_data.length; idx++) {
         const user_doc = await getDoc(history_data[idx].modifier);

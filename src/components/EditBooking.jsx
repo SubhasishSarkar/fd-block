@@ -5,11 +5,10 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
 import { Card, Select, Table } from "flowbite-react";
-
+import { getFirestore, getDoc, doc } from "firebase/firestore";
 // Firebase
 
 // Internal UI components
-import LoadingAnimation from "./LoadingAnimation";
 import Datepicker from "./DatePicker";
 
 // Internal data utils
@@ -23,6 +22,8 @@ import { MoneyFormat, DateDiff, GetSetOfDates } from "../helpers/utils";
 import { StdContext } from "../context/StdContext";
 import { Constants } from "../helpers/constants";
 import { toast } from "react-toastify";
+import AsyncSelect from "./AsynSelect";
+import app from "../firebase.config";
 
 const PriceSummary = ({
   eventFloorUnitCost,
@@ -34,7 +35,7 @@ const PriceSummary = ({
 }) => {
   const style_props = styles ? styles : "";
   return (
-    <>
+    <div className="p-3">
       {show_heading ? (
         <div className="mb-2 block mt-7">
           <span className="text-xl">Summary</span>
@@ -79,7 +80,7 @@ const PriceSummary = ({
           </div>
         </div>
       ) : null}
-    </>
+    </div>
   );
 };
 
@@ -91,14 +92,7 @@ const EditBooking = ({
   uid = null,
 }) => {
   const navigate = useNavigate();
-  const {
-    NoData,
-    SignedIn,
-    GetUserData,
-    user_phone_number,
-    isFetching,
-    user_data,
-  } = useContext(StdContext);
+  const { user_phone_number, isFetching, user_data } = useContext(StdContext);
   // Utility functions
   const CreateOptions = (obj) => {
     const options = [];
@@ -112,7 +106,10 @@ const EditBooking = ({
 
     return options;
   };
-
+  const [refList, setRefList] = useState([]);
+  const [refer, setRefer] = useState(
+    bookingObject === null ? "" : bookingObject.reference
+  );
   const [start_date, SetStartDate] = useState(startDate);
   const [end_date, SetEndDate] = useState(endDate);
   const [event, SetEvent] = useState(
@@ -136,6 +133,28 @@ const EditBooking = ({
   const [resident, setResidents] = useState();
   const [event_floor_unit_cost, set_event_floor_unit_cost] = useState();
   const [refundable_deposit_cost, set_refundable_deposit_cost] = useState();
+
+  useEffect(() => {
+    const getList = async () => {
+      const data = [];
+      const db = getFirestore(app);
+      const block_ref = doc(db, "block_dir", "list");
+      const res = await getDoc(block_ref);
+      const list = res.data();
+
+      for (const key in list) {
+        const user_obj = list[key];
+        data.push({
+          ...user_obj,
+          key: `${user_obj.name} / ${key}`,
+          value: `${user_obj.name} / ${key}`,
+        });
+      }
+      setRefList(data);
+    };
+    getList();
+  }, []);
+
   useEffect(() => {
     if (!isFetching && user_data != null) {
       if (user_data && user_data["is_member"] === true)
@@ -177,17 +196,19 @@ const EditBooking = ({
 
     SetRequestHandleInProcess(true);
     let booking_id = null;
-
+    let message = "Booking request created";
     try {
       if (editMode) {
-        await bookingObject.UpdateDoc({
+        const data = await bookingObject.UpdateDoc({
           start_date: start_date,
           end_date: end_date,
           event_type: event,
           floor_option: floor,
-          status: Constants.STATUS_REQUEST,
+
+          reference: refer,
         });
         booking_id = bookingObject.id;
+        message = data;
       } else {
         let phone_number = user_phone_number;
         if (user_data?.isAdmin && uid) {
@@ -201,11 +222,12 @@ const EditBooking = ({
           end_date: end_date,
           event_type: event,
           floor_option: floor,
+          reference: refer,
         });
       }
 
       setTimeout(() => {
-        toast.success("Booking request created");
+        toast.success(message);
         SetRequestHandleInProcess(false);
         SetShowModal(false);
         if (booking_id)
@@ -299,6 +321,31 @@ const EditBooking = ({
                 </div>
               </div>
               {/***** End of floor dropdown menu *****/}
+              <div>
+                <div className="mb-2 block mt-7">
+                  <span className="text-xl">Reference of</span>
+                </div>
+                <AsyncSelect
+                  loadOptions={async (value) => {
+                    try {
+                      let data = [];
+
+                      if (refList.length) {
+                        data = refList.filter((item, index) => {
+                          return item.value
+                            .toLowerCase()
+                            .includes(value.toLowerCase());
+                        });
+                      }
+                      return data;
+                    } catch (error) {
+                      return [];
+                    }
+                  }}
+                  value={refer}
+                  onChange={(value) => setRefer(value)}
+                />
+              </div>
             </div>
             {/***** Price summary *****/}
             {editMode === false ? (

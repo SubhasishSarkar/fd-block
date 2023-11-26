@@ -1,17 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import {
-  getFirestore,
-  getDocs,
-  collection,
-  query,
-  where,
-} from "firebase/firestore";
+import { getFirestore, getDoc, doc } from "firebase/firestore";
 import app from "../firebase.config";
-import { Collections } from "../helpers/constants";
 import { Chip } from "@mui/material";
 import { Card } from "flowbite-react";
-import { useNavigate } from "react-router-dom";
 
 const columns = [
   {
@@ -38,7 +30,7 @@ const columns = [
     valueGetter: (params) => params.row.name,
   },
   {
-    field: "phone_number",
+    field: "phoneNumber",
     headerName: "Phone Number",
     width: 200,
     editable: false,
@@ -70,18 +62,19 @@ const columns = [
 function BlockDir() {
   const [usres, setUsers] = useState();
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
   useEffect(() => {
     const getAllUsers = async () => {
       const db = getFirestore(app);
       let user_data_set = [];
-      const user_collection = collection(db, Collections.USERS);
-      const q = query(user_collection, where("is_member", "==", true));
-      const users = await getDocs(q);
-      users.forEach((doc) => {
-        const user_obj = doc.data();
-        user_data_set.push({ ...user_obj, id: user_obj.plot });
-      });
+      const block_ref = doc(db, "block_dir", "list");
+      const res = await getDoc(block_ref);
+      const list = res.data();
+
+      for (const key in list) {
+        const user_obj = list[key];
+        user_data_set.push({ ...user_obj, id: key });
+      }
+
       setUsers(user_data_set);
       setIsLoading(false);
     };

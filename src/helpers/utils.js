@@ -83,7 +83,7 @@ const BlockDates = async (start_date, end_date) => {
     setDoc(bd, { dates: [] });
   }
 
-  console.info(`Blocking ${start_date} to ${end_date}`);
+  //console.info(`Blocking ${start_date} to ${end_date}`);
   let add_dates = new Set(prev_blocked_dates);
   const dates_to_be_blocked = GetSetOfDates(start_date, end_date);
   dates_to_be_blocked.forEach((d) => add_dates.add(d));
@@ -109,7 +109,7 @@ const BlockDates = async (start_date, end_date) => {
 };
 
 const UnblockDates = async (start_date, end_date) => {
-  console.info(`Unblocking ${start_date} to ${end_date}`);
+  //console.info(`Unblocking ${start_date} to ${end_date}`);
   let remove_dates = GetSetOfDates(start_date, end_date);
   let ret_val = false;
   try {

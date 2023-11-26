@@ -21,6 +21,7 @@ import {
 import { event_types, floor_options } from "./community_hall_rates";
 import { Collections } from "./constants";
 import app from "../firebase.config";
+import { toast } from "react-toastify";
 
 class Booking {
   static REJECTION_REASON_KEY = "rejection_reason";
@@ -34,6 +35,7 @@ class Booking {
     event_type,
     floor_option,
     status,
+    reference,
     created_on = new Date(),
     modified_by = [],
     comments = {},
@@ -51,6 +53,7 @@ class Booking {
     this.id = id;
     this.modified_by = modified_by;
     this.comments = comments;
+    this.reference = reference;
   }
 
   GetEventType() {
@@ -130,6 +133,10 @@ class Booking {
     return f === this.floor_option;
   }
 
+  IsSameReference(r) {
+    return r === this.reference;
+  }
+
   static async CreateDoc({
     user_id,
     is_block_member,
@@ -138,6 +145,7 @@ class Booking {
     event_type,
     floor_option,
     status = Constants.STATUS_REQUEST,
+    reference,
   }) {
     const db = getFirestore(app);
     try {
@@ -162,7 +170,6 @@ class Booking {
           // and then increase it by 1. This value will be used as a part of the booking reference ID
           const counter = counters_doc.data()["bookings"] + 1;
           transaction.update(counters_ref, { ["bookings"]: counter });
-
           const booking_data = new Booking(
             user_id,
             "BOOK" + counter.toString().padStart(5, "0"),
@@ -171,7 +178,8 @@ class Booking {
             end_date,
             event_type,
             floor_option,
-            status
+            status,
+            reference
           );
 
           // Step 2: Create the booking request
@@ -193,7 +201,13 @@ class Booking {
     return null;
   }
 
-  async UpdateDoc({ start_date, end_date, event_type, floor_option, status }) {
+  async UpdateDoc({
+    start_date,
+    end_date,
+    event_type,
+    floor_option,
+    reference,
+  }) {
     if (this.id === null) {
       console.error("Cannot update document without ID");
       return;
@@ -209,6 +223,7 @@ class Booking {
         await BlockDates(start_date, end_date);
         updates.start_date = start_date;
         updates.end_date = end_date;
+        updates.status = Constants.STATUS_REQUEST;
       } catch (err) {
         // TODO: Issue an alert
         console.error(err);
@@ -218,13 +233,20 @@ class Booking {
 
     if (!this.IsSameEvent(event_type)) {
       updates.event_type = event_type;
+      updates.status = Constants.STATUS_REQUEST;
     }
 
     if (!this.IsSameFloorOption(floor_option)) {
       updates.floor_option = floor_option;
+      updates.status = Constants.STATUS_REQUEST;
     }
 
-    updates.status = status;
+    if (!this.IsSameReference(reference)) {
+      updates.reference = reference;
+      updates.status = Constants.STATUS_REQUEST;
+    }
+
+    //updates.status = status;
 
     if (Object.keys(updates).length > 0) {
       console.warn("Updating document");
@@ -238,13 +260,15 @@ class Booking {
         for (const key in Object.keys(updates)) {
           this[key] = updates[key];
         }
+        return "Booking updated";
       } catch (err) {
-        console.error("Could not update booking");
+        return "Could not update booking";
         console.error(err);
       }
     } else {
       // TODO: Issue an alert
       console.info("Nothing needed to be updated");
+      return "Nothing needed to be updated";
     }
   }
 
@@ -307,6 +331,7 @@ class Booking {
           timestamp: m.toDate(),
         })),
         comments: booking.comments,
+        reference: booking.reference,
       };
     },
 
@@ -321,6 +346,7 @@ class Booking {
         data.event_type,
         data.floor_option,
         data.status,
+        data.reference,
         data.created_on.toDate(),
         data.modified_by,
         data.comments === undefined ? {} : data.comments,
