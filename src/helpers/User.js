@@ -280,7 +280,10 @@ class User {
           bookings: [],
           isAdmin: false,
         });
-        await updateBlockDirOnMemberChange(user);
+        if (user.is_member) {
+          await updateBlockDirOnMemberChange(user);
+        }
+
         return user;
       } else {
         throw "Phone number already taken";

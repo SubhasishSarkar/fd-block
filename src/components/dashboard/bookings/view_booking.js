@@ -251,11 +251,11 @@ const Bookings = ({ adminView }) => {
           });
         }
       }
-      if (adminView) setHistoryList(history);
-      else setHistoryList(history.slice(0, 1));
+      setHistoryList(history);
+      // else setHistoryList(history.slice(0, 1));
     };
 
-    if (booking_obj) getBookingActions();
+    if (booking_obj && adminView) getBookingActions();
   }, [booking_obj]);
 
   const HandleEditBooking = () => {
@@ -399,7 +399,7 @@ const Bookings = ({ adminView }) => {
             )}
           </Card.Footer>
         </Card>
-        {historyList.length > 0 && (
+        {adminView && historyList.length > 0 && (
           <Card className="mt-2">
             <Card.Body>
               <Card.Title>Admin action</Card.Title>

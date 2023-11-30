@@ -1592,8 +1592,8 @@ export const updateBlockDirOnMemberChange = async (user) => {
       plot: user.plot,
       phoneNumber: user.phone_number,
       address: user.address,
+      is_permanent_member: user.is_permanent_member,
     };
   }
-
-  await updateDoc(block_ref, list);
+  await setDoc(block_ref, list);
 };

@@ -157,7 +157,7 @@ const EditBooking = ({
 
   useEffect(() => {
     if (!isFetching && user_data != null) {
-      if (user_data && user_data["is_member"] === true)
+      if (user_data && user_data["is_permanent_member"] === true)
         setResidents("residents");
       else setResidents("non_residents");
     }
@@ -321,31 +321,33 @@ const EditBooking = ({
                 </div>
               </div>
               {/***** End of floor dropdown menu *****/}
-              <div>
-                <div className="mb-2 block mt-7">
-                  <span className="text-xl">Reference of</span>
-                </div>
-                <AsyncSelect
-                  loadOptions={async (value) => {
-                    try {
-                      let data = [];
+              {!user_data.is_permanent_member && (
+                <div>
+                  <div className="mb-2 block mt-7">
+                    <span className="text-xl">Reference of</span>
+                  </div>
+                  <AsyncSelect
+                    loadOptions={async (value) => {
+                      try {
+                        let data = [];
 
-                      if (refList.length) {
-                        data = refList.filter((item, index) => {
-                          return item.value
-                            .toLowerCase()
-                            .includes(value.toLowerCase());
-                        });
+                        if (refList.length) {
+                          data = refList.filter((item, index) => {
+                            return item.value
+                              .toLowerCase()
+                              .includes(value.toLowerCase());
+                          });
+                        }
+                        return data;
+                      } catch (error) {
+                        return [];
                       }
-                      return data;
-                    } catch (error) {
-                      return [];
-                    }
-                  }}
-                  value={refer}
-                  onChange={(value) => setRefer(value)}
-                />
-              </div>
+                    }}
+                    value={refer}
+                    onChange={(value) => setRefer(value)}
+                  />
+                </div>
+              )}
             </div>
             {/***** Price summary *****/}
             {editMode === false ? (

@@ -65,6 +65,7 @@ function AddUser() {
             handleBlur,
             handleSubmit,
             isSubmitting,
+            setFieldValue,
             /* and other goodies */
           }) => (
             <Form onSubmit={handleSubmit}>
@@ -129,7 +130,13 @@ function AddUser() {
                 <Form.Control
                   name="is_member"
                   type="checkbox"
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    e.preventDefault();
+                    if (!e.target.value) {
+                      setFieldValue("is_permanent_member", false);
+                    }
+                    handleChange(e);
+                  }}
                   onBlur={handleBlur}
                   value={values.is_member}
                   checked={values.is_member}
@@ -145,7 +152,14 @@ function AddUser() {
                 <Form.Control
                   name="is_permanent_member"
                   type="checkbox"
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    e.preventDefault();
+                    if (e.target.value) {
+                      setFieldValue("is_member", true);
+                    }
+
+                    handleChange(e);
+                  }}
                   onBlur={handleBlur}
                   value={values.is_permanent_member}
                   checked={values.is_permanent_member}
