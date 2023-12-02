@@ -34,9 +34,7 @@ const columns = [
     width: 150,
     editable: false,
     renderCell: (value) => {
-      return typeof value.value == "number"
-        ? Timestamp.fromDate(new Date(value.value)).toDate().toDateString()
-        : value.value.toDate().toDateString();
+      return value.value.toDateString();
     },
   },
   {
@@ -142,7 +140,7 @@ function AllBookings() {
             const booking_obj = booking_doc.data();
             booking_data_set.push({
               ...booking_obj,
-              ...data,
+              // ...data,
             });
           }
         }

@@ -1597,3 +1597,12 @@ export const updateBlockDirOnMemberChange = async (user) => {
   }
   await setDoc(block_ref, list);
 };
+
+export const deleteFromBlockDir = async (id) => {
+  const db = getFirestore(app);
+  const block_ref = doc(db, "block_dir", "list");
+  const res = await getDoc(block_ref);
+  const list = res.data();
+  delete list[id];
+  await setDoc(block_ref, list);
+};

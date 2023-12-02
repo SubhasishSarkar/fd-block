@@ -6,7 +6,11 @@ import { StdContext } from "../../../context/StdContext";
 import User from "../../../helpers/User";
 import { Button, Container, Form } from "react-bootstrap";
 import { toast } from "react-toastify";
-import { updateBlockDirOnMemberChange } from "../../../helpers/blockDir";
+import {
+  deleteFromBlockDir,
+  updateBlockDirOnMemberChange,
+} from "../../../helpers/blockDir";
+import { useSearchParams } from "react-router-dom";
 export function UpdateUserModal(addUser = false) {
   const [show, setShow] = useState(false);
   const [userData, setUserData] = useState();
@@ -58,6 +62,7 @@ const UpdateUser = ({
   updateProfile = false,
   isAdmin = "false",
 }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const { UpdateUserData, SignOut } = useContext(StdContext);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(false);
@@ -85,14 +90,19 @@ const UpdateUser = ({
   const createNewUserFromExisting = async () => {
     setLoading(true);
     await User.CreateUser(newPhno.old, user);
-    await UpdateUserData(true);
+    //await UpdateUserData(true);
+    await deleteFromBlockDir(newPhno.old);
     await updateBlockDirOnMemberChange(user);
     setShow(false);
 
     setStep(1);
     setLoading(false);
     toast.success("Updated your profile");
-    SignOut();
+
+    if (uid === userData.phone_number) SignOut();
+    else {
+      setSearchParams(`uid=${newPhno.new}`);
+    }
   };
   return (
     <Container>
