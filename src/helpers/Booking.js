@@ -36,6 +36,8 @@ class Booking {
     floor_option,
     status,
     reference,
+    cost_per_day,
+    refundable_deposite,
     created_on = new Date(),
     modified_by = [],
     comments = {},
@@ -54,8 +56,15 @@ class Booking {
     this.modified_by = modified_by;
     this.comments = comments;
     this.reference = reference;
+    this.cost_per_day = cost_per_day;
+    this.refundable_deposite = refundable_deposite;
   }
-
+  GetCostPerDay() {
+    return this.cost_per_day;
+  }
+  GetRefundableDeposite() {
+    return this.refundable_deposite;
+  }
   GetEventType() {
     return this.event_type;
   }
@@ -146,6 +155,8 @@ class Booking {
     floor_option,
     status = Constants.STATUS_REQUEST,
     reference,
+    cost_per_day,
+    refundable_deposite,
   }) {
     const db = getFirestore(app);
     try {
@@ -179,7 +190,9 @@ class Booking {
             event_type,
             floor_option,
             status,
-            reference
+            reference,
+            cost_per_day,
+            refundable_deposite
           );
 
           // Step 2: Create the booking request
@@ -207,6 +220,8 @@ class Booking {
     event_type,
     floor_option,
     reference,
+    cost_per_day,
+    refundable_deposite,
   }) {
     if (this.id === null) {
       console.error("Cannot update document without ID");
@@ -246,7 +261,8 @@ class Booking {
       updates.status = Constants.STATUS_REQUEST;
     }
 
-    //updates.status = status;
+    updates.cost_per_day = cost_per_day;
+    updates.refundable_deposite = refundable_deposite;
 
     if (Object.keys(updates).length > 0) {
       console.warn("Updating document");
@@ -263,7 +279,6 @@ class Booking {
         return "Booking updated";
       } catch (err) {
         return "Could not update booking";
-        console.error(err);
       }
     } else {
       // TODO: Issue an alert
@@ -332,6 +347,8 @@ class Booking {
         })),
         comments: booking.comments,
         reference: booking.reference,
+        cost_per_day: booking.cost_per_day,
+        refundable_deposite: booking.refundable_deposite,
       };
     },
 
@@ -347,6 +364,8 @@ class Booking {
         data.floor_option,
         data.status,
         data.reference,
+        data.cost_per_day,
+        data.refundable_deposite,
         data.created_on.toDate(),
         data.modified_by,
         data.comments === undefined ? {} : data.comments,

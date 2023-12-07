@@ -204,8 +204,9 @@ const EditBooking = ({
           end_date: end_date,
           event_type: event,
           floor_option: floor,
-
           reference: refer,
+          cost_per_day: event_floor_unit_cost,
+          refundable_deposite: refundable_deposit_cost,
         });
         booking_id = bookingObject.id;
         message = data;
@@ -223,6 +224,8 @@ const EditBooking = ({
           event_type: event,
           floor_option: floor,
           reference: refer,
+          cost_per_day: event_floor_unit_cost,
+          refundable_deposite: refundable_deposit_cost,
         });
       }
 

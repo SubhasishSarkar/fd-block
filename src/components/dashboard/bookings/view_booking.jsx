@@ -61,15 +61,9 @@ const BookingDetails = ({
 }) => {
   //const { GetUserData, user_data, isFetching } = useContext(StdContext);
   //const user_data = GetUserData();
-  const resident =
-    user_data && user_data["is_permanent_member"] === true
-      ? "residents"
-      : "non_residents";
-  const event = booking.GetEventType();
-  const floor = booking.GetFloorOption();
-  const event_floor_unit_cost = cost_table[resident][event][floor];
-  const refundable_deposit_cost =
-    cost_table[resident][event]["security_deposit"];
+
+  const event_floor_unit_cost = booking.GetCostPerDay();
+  const refundable_deposit_cost = booking.GetRefundableDeposite();
   const date_diff = booking.GetDuration();
 
   return (
