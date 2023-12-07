@@ -2,8 +2,8 @@ import { Formik } from "formik";
 import React, { useState } from "react";
 import { Button, Card, Container, Form } from "react-bootstrap";
 import { toast } from "react-toastify";
-import { updateBlockDirOnMemberChange } from "../../../../helpers/blockDir";
-import User from "../../../../helpers/User";
+import { updateBlockDirOnMemberChange } from "../helpers/blockDir";
+import User from "../helpers/User";
 import * as yup from "yup";
 
 const phoneRegExp = /^[\+][9][1][1-9]{1}[0-9]{9}$/;

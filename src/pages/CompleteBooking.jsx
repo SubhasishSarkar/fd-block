@@ -2,7 +2,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 
-import EditBooking from "../EditBooking";
+import EditBooking from "../components/EditBooking";
 
 const CompleteBooking = () => {
   const location = useLocation();

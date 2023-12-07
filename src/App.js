@@ -1,20 +1,20 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Home from "./components/Home.jsx";
-import Login from "./components/Login.jsx";
+import Home from "./pages/Home.jsx";
+import Login from "./pages/Login.jsx";
 import { StdContextProvider } from "./context/StdContext.jsx";
-import ContactUs from "./components/ContactUs.jsx";
+import ContactUs from "./pages/ContactUs.jsx";
 import Layout from "./components/Layout";
 import RequireAuth from "./components/RequireAuth.jsx";
-import BookingsPage from "./components/bookings/index";
-import CompleteBooking from "./components/bookings/CompleteBooking.jsx";
-import Bookings from "./components/dashboard/bookings/index.js";
-import Profile from "./components/dashboard/User/Profile.jsx";
-import AboutUs from "./components/AboutUs.jsx";
-import EditBookingPage from "./components/dashboard/bookings/edit_booking.js";
-import AllUsers from "./components/dashboard/admin/features/AllUsers.jsx";
-import AllBookings from "./components/dashboard/admin/features/AllBookings.jsx";
-import BlockDir from "./components/BlockDir.jsx";
-import AddUser from "./components/dashboard/admin/features/AddUser.jsx";
+import BookingsPage from "./pages/BookingPage.jsx";
+import CompleteBooking from "./pages/CompleteBooking.jsx";
+import Bookings from "./pages/Booking.jsx";
+import Profile from "./pages/Profile.jsx";
+import AboutUs from "./pages/AboutUs.jsx";
+import EditBookingPage from "./components/dashboard/bookings/edit_booking";
+import AllUsers from "./pages/AllUsers.jsx";
+import AllBookings from "./pages/AllBookings.jsx";
+import BlockDir from "./pages/BlockDir.jsx";
+import AddUser from "./pages/AddUser.jsx";
 function App() {
   return (
     <div className="App">

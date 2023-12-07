@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import { StdContext } from "../../../context/StdContext";
+import { StdContext } from "../context/StdContext";
 import { Table } from "flowbite-react";
 import { Card, Modal } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
-import UpdateUser from "./UpdateUser";
-import User from "../../../helpers/User";
+import UpdateUser from "../components/dashboard/User/UpdateUser";
+import User from "../helpers/User";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 function Profile({ adminView = false, userId }) {

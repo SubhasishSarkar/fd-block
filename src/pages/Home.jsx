@@ -1,6 +1,5 @@
 import * as React from "react";
-import { Card as Card1 } from "flowbite-react";
-import HeroSectionImg from "./SvgCommunityGroup";
+import HeroSectionImg from "../components/SvgCommunityGroup";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";

@@ -1,9 +1,9 @@
 import React from "react";
 import Card from "react-bootstrap/Card";
 
-import ListBookings from "../../ListBookings";
+import ListBookings from "../components/ListBookings";
 import { useParams, useSearchParams } from "react-router-dom";
-import BookingDetails from "./view_booking";
+import BookingDetails from "../components/dashboard/bookings/view_booking";
 
 const Bookings = () => {
   let [searchParams] = useSearchParams();

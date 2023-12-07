@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 
-import EditBooking from "../../../components/EditBooking";
+import EditBooking from "../../EditBooking";
 
 import app from "../../../firebase.config";
 import Booking from "../../../helpers/Booking";

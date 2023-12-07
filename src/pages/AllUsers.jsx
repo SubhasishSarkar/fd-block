@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { getFirestore, getDocs, collection } from "firebase/firestore";
-import app from "../../../../firebase.config.js";
-import { Collections } from "../../../../helpers/constants";
+import app from "../firebase.config.js";
+import { Collections } from "../helpers/constants.js";
 import { Chip } from "@mui/material";
 import { Card } from "flowbite-react";
 import { useNavigate } from "react-router-dom";

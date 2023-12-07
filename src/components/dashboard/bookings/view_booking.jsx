@@ -8,7 +8,7 @@ import Spinner from "react-bootstrap/Spinner";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import { PriceSummary } from "../../../components/EditBooking";
+import { PriceSummary } from "../../EditBooking";
 import PendingIcon from "@mui/icons-material/Pending";
 import app from "../../../firebase.config";
 import { StdContext } from "../../../context/StdContext";

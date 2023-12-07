@@ -8,12 +8,12 @@ import {
   Timestamp,
   where,
 } from "firebase/firestore";
-import app from "../../../../firebase.config.js";
-import { Collections } from "../../../../helpers/constants";
+import app from "../firebase.config.js";
+import { Collections } from "../helpers/constants.js";
 import { Box, Chip, Tab } from "@mui/material";
 import { Card } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
-import Booking from "../../../../helpers/Booking";
+import Booking from "../helpers/Booking.js";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";

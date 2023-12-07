@@ -2,8 +2,8 @@ import React, { useState, Suspense } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Spinner } from "flowbite-react";
 
-import CommunityHallImageSlider from "../SvgCommunityGroup";
-import DatePicker from "../DatePicker";
+import CommunityHallImageSlider from "../components/SvgCommunityGroup";
+import DatePicker from "../components/DatePicker";
 import Button from "react-bootstrap/Button";
 
 export default function BookingsPage() {
