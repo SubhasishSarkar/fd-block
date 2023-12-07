@@ -68,6 +68,12 @@ const columns = [
     },
   },
   {
+    field: "reference",
+    headerName: "Reference of",
+    width: 150,
+    editable: false,
+  },
+  {
     field: "name",
     headerName: "Name",
     width: 150,
@@ -140,7 +146,8 @@ function AllBookings() {
             const booking_obj = booking_doc.data();
             booking_data_set.push({
               ...booking_obj,
-              // ...data,
+              name: data?.name,
+              phone_number: data?.phone_number,
             });
           }
         }

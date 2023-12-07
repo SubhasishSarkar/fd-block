@@ -327,7 +327,8 @@ const EditBooking = ({
               {!user_data.is_permanent_member && (
                 <div>
                   <div className="mb-2 block mt-7">
-                    <span className="text-xl">Reference of</span>
+                    <span className="text-xl">Reference of</span>{" "}
+                    <span className="text-red-500">*</span>
                   </div>
                   <AsyncSelect
                     loadOptions={async (value) => {
@@ -359,6 +360,10 @@ const EditBooking = ({
                 refundableDepositCost={refundable_deposit_cost}
                 dateDiff={date_diff}
                 requestButtonAction={() => {
+                  if (!refer) {
+                    toast.error("Please provide reference");
+                    return;
+                  }
                   SetShowModal(true);
                 }}
               />
